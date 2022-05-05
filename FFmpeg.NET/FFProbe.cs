@@ -61,7 +61,7 @@ public static partial class FFProbe
     }
 
     /// <summary>
-    ///     Probe the specified inpui url.
+    ///     Probe the specified input url.
     /// </summary>
     /// <param name="url">The input url.</param>
     /// <returns>The probed result data.</returns>

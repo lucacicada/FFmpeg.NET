@@ -24,7 +24,7 @@ public static class AV
     ///     Creates a <see cref="Dictionary{TKey, TValue}"/> from an <see cref="AVDictionary"/>* pointer.
     /// </summary>
     /// <param name="dictionary">The AV dictionary pointer.</param>
-    /// <returns>An emty dictionary if the pointer is <see langword="null" />. </returns>
+    /// <returns>An empty dictionary if the pointer is <see langword="null" />. </returns>
     public static unsafe Dictionary<string, string> ToDictionary(AVDictionary* dictionary)
     {
         var result = new Dictionary<string, string>();
@@ -79,7 +79,7 @@ public static class AV
             return null;
         }
 
-        // use decimal.Divide to avoid precision loss 
+        // use decimal.Divide to avoid precision loss
         // ts / time_base will get fractional seconds, so * by TicksPerSecond to get ticks
         return new TimeSpan((long)(decimal.Divide(ts, time_base) * TimeSpan.TicksPerSecond));
     }

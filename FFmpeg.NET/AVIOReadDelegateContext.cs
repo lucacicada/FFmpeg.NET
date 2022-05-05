@@ -27,7 +27,7 @@ public abstract class AVIOReadDelegateContext : IDisposable
                 throw new AVIOAllocationException(nameof(ffmpeg.av_malloc), message: null);
 
             // prevent the GC from colleting the function pointer
-            // TODO: it should be unecessary however keep the reference for now
+            // TODO: it should be unnecessary however keep the reference for now
             read_packet = new avio_alloc_context_read_packet(ReadUnsafe);
             seek = new avio_alloc_context_seek(SeekUnsafe);
 
