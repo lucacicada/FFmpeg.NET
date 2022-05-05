@@ -12,6 +12,12 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>https://github.com/lucacicada/FFmpeg.NET</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/lucacicada/FFmpeg.NET</RepositoryUrl>
+		<PackageTags>FFmpeg</PackageTags>
+		<PackageId>FFmpeg.AVIO</PackageId>
+		<Description>FFmpeg wrapper around FFmpeg.AutoGen for .NET</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
