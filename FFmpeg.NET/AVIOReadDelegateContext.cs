@@ -5,7 +5,7 @@
 /// </summary>
 public abstract class AVIOReadDelegateContext : IDisposable
 {
-    const int DEFAULT_BUFFER_SIZE = 4 * 1024;
+    const int DEFAULT_BUFFER_SIZE = 0x1000;
 
     private readonly avio_alloc_context_read_packet read_packet;
     private readonly avio_alloc_context_seek seek;
@@ -23,7 +23,7 @@ public abstract class AVIOReadDelegateContext : IDisposable
         {
             byte* buffer = (byte*)ffmpeg.av_malloc((ulong)bufferSize + ffmpeg.AV_INPUT_BUFFER_PADDING_SIZE);
 
-            if (buffer == null)
+            if (buffer is null)
                 throw new AVIOAllocationException(nameof(ffmpeg.av_malloc), message: null);
 
             // prevent the GC from colleting the function pointer
@@ -33,7 +33,7 @@ public abstract class AVIOReadDelegateContext : IDisposable
 
             AVIOContext* ctxPtr = ffmpeg.avio_alloc_context(buffer, bufferSize, 0, null, read_packet, null, seek);
 
-            if (ctxPtr == null)
+            if (ctxPtr is null)
                 throw new AVIOAllocationException(nameof(ffmpeg.avio_alloc_context), message: null);
 
             ctx = new IntPtr(ctxPtr);

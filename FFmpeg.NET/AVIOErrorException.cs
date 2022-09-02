@@ -4,25 +4,32 @@
 [Serializable]
 public class AVIOErrorException : AVIOException
 {
-    private static string? GetErrorMessage(int error)
+    /// <summary>
+    ///     Returns a description of the AVERROR code, if such description is available, null otherwise.
+    /// </summary>
+    /// <param name="error">The AVERROR code.</param>
+    /// <returns>A string describing the AVERROR code.</returns>
+    /// <remarks>
+    ///     It always return <see langword="null" /> if the error is a non negative number.
+    ///     It is an alias for <see cref="ffmpeg.av_strerror(int, byte*, ulong)" />.
+    /// </remarks>
+    public static string? GetErrorMessage(int error)
     {
-        string? message = null;
+        const int BUFFER_SIZE = 1024;
 
         if (error < 0)
         {
-            var bufferSize = 1024;
-
             unsafe
             {
-                var buffer = stackalloc byte[bufferSize];
-                if (ffmpeg.av_strerror(error, buffer, (ulong)bufferSize) == 0)
+                var buffer = stackalloc byte[BUFFER_SIZE];
+                if (ffmpeg.av_strerror(error, buffer, (ulong)BUFFER_SIZE) == 0)
                 {
-                    message = Marshal.PtrToStringAnsi((IntPtr)buffer);
+                    return Marshal.PtrToStringAnsi((IntPtr)buffer);
                 }
             }
         }
 
-        return message;
+        return null;
     }
 
     /// <summary>
@@ -31,16 +38,16 @@ public class AVIOErrorException : AVIOException
     public int ErrorCode { get; }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref='System.ComponentModel.Win32Exception'/> class with the specified error.
+    ///     Initializes a new instance of the <see cref="AVIOErrorException"/> class with the specified error.
     /// </summary>
     public AVIOErrorException(int error) : this(error, GetErrorMessage(error))
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref='System.ComponentModel.Win32Exception'/> class with the specified error and the specified detailed description.
+    ///     Initializes a new instance of the <see cref="AVIOErrorException"/> class with the specified error and the specified detailed description.
     /// </summary>
-    public AVIOErrorException(int error, string? message) : base(message)
+    public AVIOErrorException(int error, string? message) : base(message ?? GetErrorMessage(error))
     {
         ErrorCode = error;
     }

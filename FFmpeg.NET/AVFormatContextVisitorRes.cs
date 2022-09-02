@@ -1,10 +1,5 @@
 ﻿namespace AVIO;
 
-public interface IAVFormatContextVisitor<out TResult>
-{
-    unsafe TResult Visit(AVFormatContext* formatContext);
-}
-
 // the visitor pattern may not be a good idea...
 internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeResult>
 {
@@ -58,7 +53,7 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
 
         // avio_size will consume the context, so call it at the end
         // avio_size can return AVERROR if the pointer is null or the pb is not seekable, so it is safe to ignore
-        var size = (formatContext->pb == null) ? -1 : ffmpeg.avio_size(formatContext->pb);
+        var size = (formatContext->pb is null) ? -1 : ffmpeg.avio_size(formatContext->pb);
 
         return new ProbeResult()
         {
@@ -126,7 +121,7 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
         codec_id = par->codec_id;
 
         AVCodecDescriptor* cd = ffmpeg.avcodec_descriptor_get(par->codec_id);
-        if (cd != null)
+        if (cd is not null)
         {
             codec_name = Marshal.PtrToStringAnsi((IntPtr)cd->name)!;
             codec_long_name = Marshal.PtrToStringAnsi((IntPtr)cd->long_name); // can be null
@@ -147,10 +142,10 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
         // -----------------------------------------------------------------------
         // Second ffprobe.c assignments pass
         // -----------------------------------------------------------------------
-        if (dec_ctx != null && dec_ctx->codec != null && dec_ctx->codec->priv_class != null)
+        if (dec_ctx is not null && dec_ctx->codec is not null && dec_ctx->codec->priv_class is not null)
         {
             AVOption* opt = null;
-            while ((opt = ffmpeg.av_opt_next((void*)dec_ctx->priv_data, opt)) != null)
+            while ((opt = ffmpeg.av_opt_next((void*)dec_ctx->priv_data, opt)) is not null)
             {
                 if ((opt->flags & ffmpeg.AV_OPT_FLAG_EXPORT) == 0)
                     continue;
@@ -183,14 +178,10 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
             bit_rate = par->bit_rate;
         }
 
-        if (dec_ctx != null && dec_ctx->rc_max_rate > 0)
+        if (dec_ctx is not null)
         {
-            max_bit_rate = dec_ctx->rc_max_rate;
-        }
-
-        if (dec_ctx != null && dec_ctx->bits_per_raw_sample > 0)
-        {
-            bits_per_raw_sample = dec_ctx->bits_per_raw_sample;
+            if (dec_ctx->rc_max_rate > 0) max_bit_rate = dec_ctx->rc_max_rate;
+            if (dec_ctx->bits_per_raw_sample > 0) bits_per_raw_sample = dec_ctx->bits_per_raw_sample;
         }
 
         if (stream->nb_frames != 0)
@@ -238,7 +229,7 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
                     width = par->width;
                     height = par->height;
 
-                    if (dec_ctx != null)
+                    if (dec_ctx is not null)
                     {
                         codec_properties = dec_ctx->properties;
                         coded_width = dec_ctx->coded_width;
@@ -270,7 +261,7 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
                     chroma_location = par->chroma_location;
                     field_order = par->field_order;
 
-                    if (dec_ctx != null)
+                    if (dec_ctx is not null)
                     {
                         refs = dec_ctx->refs;
                     }
@@ -330,18 +321,34 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
                     int sample_rate;
                     int channels;
                     ulong channel_layout = 0;
+                    AVChannelOrder channel_layout_order = AVChannelOrder.AV_CHANNEL_ORDER_UNSPEC;
                     string? channel_layout_name = null;
                     int bits_per_sample;
 
                     sample_fmt = (AVSampleFormat)par->format;
                     sample_fmt_name = ffmpeg.av_get_sample_fmt_name((AVSampleFormat)par->format);
                     sample_rate = par->sample_rate;
-                    channels = par->channels;
 
-                    if (par->channel_layout != 0)
+                    //channels = par->channels;
+
+                    //if (par->channel_layout != 0)
+                    //{
+                    //    channel_layout = par->channel_layout;
+                    //    channel_layout_name = AV.GetChannelLayoutName(par->channels, par->channel_layout);
+                    //}
+
+                    channels = par->ch_layout.nb_channels;
+
+                    if (par->ch_layout.order is not AVChannelOrder.AV_CHANNEL_ORDER_UNSPEC)
                     {
-                        channel_layout = par->channel_layout;
-                        channel_layout_name = AV.GetChannelLayoutName(par->channels, par->channel_layout);
+                        channel_layout_order = par->ch_layout.order;
+
+                        byte[] val_str = new byte[128];
+                        fixed (byte* buf = val_str)
+                        {
+                            ffmpeg.av_channel_layout_describe(&par->ch_layout, buf, 128).ThrowExceptionIfError(nameof(ffmpeg.av_channel_layout_describe));
+                            channel_layout_name = Marshal.PtrToStringAnsi((IntPtr)buf);
+                        }
                     }
 
                     bits_per_sample = ffmpeg.av_get_bits_per_sample(par->codec_id);
@@ -380,6 +387,7 @@ internal sealed class AVFormatContextVisitorRes : IAVFormatContextVisitor<ProbeR
                         SampleRate = sample_rate,
                         Channels = channels,
                         ChannelLayout = channel_layout,
+                        ChannelLayoutOrder = channel_layout_order,
                         ChannelLayoutName = channel_layout_name,
                         BitsPerSample = bits_per_sample,
                     };

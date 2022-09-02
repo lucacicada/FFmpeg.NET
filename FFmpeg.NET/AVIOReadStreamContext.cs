@@ -9,7 +9,7 @@
 [DebuggerDisplay("stream")]
 public sealed class AVIOReadStreamContext : IDisposable
 {
-    const int DEFAULT_BUFFER_SIZE = 4 * 1024;
+    const int DEFAULT_BUFFER_SIZE = 0x1000;
 
     private readonly avio_alloc_context_read_packet read_packet;
     private readonly avio_alloc_context_seek seek;
@@ -19,7 +19,7 @@ public sealed class AVIOReadStreamContext : IDisposable
     /// <summary>
     ///     Creates a new <see cref="AVIOReadStreamContext" /> instance.
     /// </summary>
-    public AVIOReadStreamContext(System.IO.Stream stream!!)
+    public AVIOReadStreamContext(System.IO.Stream stream)
         : this(stream, DEFAULT_BUFFER_SIZE)
     {
     }
@@ -27,8 +27,9 @@ public sealed class AVIOReadStreamContext : IDisposable
     /// <summary>
     ///     Creates a new <see cref="AVIOReadStreamContext" /> instance.
     /// </summary>
-    public AVIOReadStreamContext(System.IO.Stream stream!!, int bufferSize)
+    public AVIOReadStreamContext(System.IO.Stream stream, int bufferSize)
     {
+        if (stream is null) throw new ArgumentNullException(nameof(stream));
         if (!stream.CanRead) throw new ArgumentException($"{nameof(stream)} is not readable", nameof(stream));
         if (bufferSize <= 0) throw new ArgumentOutOfRangeException(nameof(bufferSize));
 
@@ -38,7 +39,7 @@ public sealed class AVIOReadStreamContext : IDisposable
         {
             byte* buffer = (byte*)ffmpeg.av_malloc((ulong)bufferSize + ffmpeg.AV_INPUT_BUFFER_PADDING_SIZE);
 
-            if (buffer == null)
+            if (buffer is null)
                 throw new AVIOAllocationException(nameof(ffmpeg.av_malloc), message: null);
 
             // prevent the GC from colleting the function pointer
@@ -48,7 +49,7 @@ public sealed class AVIOReadStreamContext : IDisposable
 
             AVIOContext* ctxPtr = ffmpeg.avio_alloc_context(buffer, bufferSize, 0, null, read_packet, null, seek);
 
-            if (ctxPtr == null)
+            if (ctxPtr is null)
                 throw new AVIOAllocationException(nameof(ffmpeg.avio_alloc_context), message: null);
 
             ctx = new IntPtr(ctxPtr);
@@ -80,7 +81,7 @@ public sealed class AVIOReadStreamContext : IDisposable
 
     private unsafe long SeekUnsafe(void* _, long offset, int whence)
     {
-        if (whence == ffmpeg.AVSEEK_SIZE)
+        if (whence is ffmpeg.AVSEEK_SIZE)
             return stream.Length;
 
         if (!stream.CanSeek)

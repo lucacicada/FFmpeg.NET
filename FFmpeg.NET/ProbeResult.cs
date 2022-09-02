@@ -268,8 +268,12 @@ public class AudioStream : Stream
     [JsonPropertyName("channels")]
     public int Channels { get; set; }
 
+    [Obsolete("use ChannelLayoutName")]
     [JsonPropertyName("channel_layout")]
     public ulong ChannelLayout { get; set; }
+
+    [JsonPropertyName("channel_layout_order")]
+    public AVChannelOrder ChannelLayoutOrder { get; set; }
 
     [JsonPropertyName("channel_layout_name")]
     public string? ChannelLayoutName { get; set; }

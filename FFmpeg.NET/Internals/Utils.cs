@@ -2,12 +2,6 @@
 
 internal static class Utils
 {
-    public static int ThrowExceptionIfError(this int error)
-    {
-        if (error < 0) throw new AVIOErrorException(error);
-        return error;
-    }
-
     public static int ThrowExceptionIfError(this int error, string message)
     {
         if (error < 0) throw new AVIOErrorException(error, message);
@@ -16,7 +10,7 @@ internal static class Utils
 
     public static string? AVGet(this IReadOnlyDictionary<string, string>? dictionary, string key)
     {
-        if (dictionary != null)
+        if (dictionary is not null)
         {
             foreach (KeyValuePair<string, string> tag in dictionary)
             {
@@ -39,19 +33,19 @@ internal static class Utils
         }
 
         var codec = ffmpeg.avcodec_find_decoder(stream->codecpar->codec_id);
-        if (codec == null)
+        if (codec is null)
         {
             // WARN "Unsupported codec with id %d for input stream %d\n", stream->codecpar->codec_id, stream->index)
             return null;
         }
 
         AVCodecContext* dec_ctx = ffmpeg.avcodec_alloc_context3(codec);
-        if (codec == null)
+        if (codec is null)
         {
             throw new AVIOAllocationException(nameof(ffmpeg.avcodec_alloc_context3), message: null); // Could not allocate context3.
         }
 
-        _ = ffmpeg.avcodec_parameters_to_context(dec_ctx, stream->codecpar).ThrowExceptionIfError();
+        _ = ffmpeg.avcodec_parameters_to_context(dec_ctx, stream->codecpar).ThrowExceptionIfError(nameof(ffmpeg.avcodec_parameters_to_context));
         dec_ctx->pkt_timebase = stream->time_base;
 
         ffmpeg.avcodec_open2(dec_ctx, codec, null).ThrowExceptionIfError($"Could not open codec for input stream {stream->index}.");
