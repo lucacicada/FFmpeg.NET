@@ -1,41 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
-		<Version>3.0.0</Version>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net8.0;net7.0;net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+    <Version>3.0.0</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <IsAotCompatible>true</IsAotCompatible>
-		<LangVersion>preview</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<RootNamespace>AVIO</RootNamespace>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<RepositoryType>git</RepositoryType>
-		<PackageProjectUrl>https://github.com/lucacicada/FFmpeg.NET</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/lucacicada/FFmpeg.NET</RepositoryUrl>
-		<PackageTags>FFmpeg</PackageTags>
-		<PackageId>FFmpeg.AVIO</PackageId>
-		<Description>FFmpeg wrapper around FFmpeg.AutoGen for .NET</Description>
-	</PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>AVIO</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/lucacicada/FFmpeg.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/lucacicada/FFmpeg.NET</RepositoryUrl>
+    <PackageTags>FFmpeg</PackageTags>
+    <PackageId>FFmpeg.AVIO</PackageId>
+    <Description>FFmpeg wrapper around FFmpeg.AutoGen for .NET</Description>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Using Include="System.Collections.Immutable" />
-		<Using Include="System.Diagnostics" />
-		<Using Include="System.Runtime.InteropServices" />
-		<Using Include="System.Runtime.Serialization" />
-		<Using Include="System.Text" />
-		<Using Include="FFmpeg.AutoGen" />
-	</ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Collections.Immutable" />
+    <Using Include="System.Diagnostics" />
+    <Using Include="System.Runtime.InteropServices" />
+    <Using Include="System.Runtime.Serialization" />
+    <Using Include="System.Text" />
+    <Using Include="FFmpeg.AutoGen" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="FFmpeg.AutoGen" Version="7.0.0" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FFmpeg.AutoGen" Version="7.0.0" />
+  </ItemGroup>
 
 </Project>
