@@ -1,5 +1,9 @@
 ﻿namespace AVIO;
 
+/// <summary>
+///    Represents a visitor for <see cref="AVFormatContext"/> pointers.
+/// </summary>
+/// <typeparam name="TResult"></typeparam>
 public interface IAVFormatContextVisitor<out TResult>
 {
     /// <summary>

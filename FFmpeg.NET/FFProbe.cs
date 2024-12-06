@@ -57,7 +57,7 @@ public static partial class FFProbe
     /// </summary>
     /// <param name="stream"></param>
     /// <returns>The probed result data.</returns>
-    /// <remarks>The stream is not diposed.</remarks>
+    /// <remarks>The stream is not disposed.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable.</exception>
     /// <exception cref="AVIOAllocationException">Fail to allocate memory.</exception>
@@ -161,7 +161,7 @@ public static partial class FFProbe
     /// <param name="stream"></param>
     /// <param name="visitor">The visitor.</param>
     /// <returns>The probed result data.</returns>
-    /// <remarks>The stream is not diposed.</remarks>
+    /// <remarks>The stream is not disposed.</remarks>
     /// <exception cref="ArgumentNullException"><paramref name="stream"/> is null.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="visitor"/> is null.</exception>
     /// <exception cref="ArgumentException"><paramref name="stream"/> is not readable.</exception>
